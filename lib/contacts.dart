@@ -2,23 +2,17 @@ import 'package:basqapp/people.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 class ContactsScreen extends StatefulWidget {
   @override
   _ContactsScreenState createState() => _ContactsScreenState();
-
 }
 
 class _ContactsScreenState extends State<ContactsScreen> {
-
   List<Person> contactsList = People().people;
 
   @override
   Widget build(BuildContext context) {
-    var dp = MediaQuery
-        .of(context)
-        .size
-        .height / 100;
+    var dp = MediaQuery.of(context).size.height / 100;
     return Scaffold(
         backgroundColor: Colors.white,
         body: Container(
@@ -65,15 +59,13 @@ class _ContactsScreenState extends State<ContactsScreen> {
                 Container(
                     decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(3 * dp)),
+                        borderRadius: BorderRadius.all(Radius.circular(3 * dp)),
                         boxShadow: [
                           BoxShadow(
                               color: Colors.grey.shade400,
                               offset: Offset(0.0, -2.0),
                               blurRadius: 3.0,
-                              spreadRadius: 1.0
-                          )
+                              spreadRadius: 1.0)
                         ]),
                     margin: EdgeInsets.only(
                         top: 2 * dp, right: 4 * dp, left: 4 * dp),
@@ -81,15 +73,14 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     child: TextField(
                       textAlign: TextAlign.start,
                       decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 15),
+                          contentPadding:
+                              EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(3 * dp),
                               ),
-                              borderSide: BorderSide(
-                                  color: Colors.white, width: 0.0)
-                          ),
+                              borderSide:
+                                  BorderSide(color: Colors.white, width: 0.0)),
                           filled: true,
                           hintStyle: new TextStyle(color: Colors.grey),
                           hintText: "Type in your text",
@@ -98,37 +89,41 @@ class _ContactsScreenState extends State<ContactsScreen> {
                 Container(
                   height: 3 * dp,
                   margin: EdgeInsets.only(top: dp),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.shade300,
-                          offset: Offset(0.0, 5.0),
-                          blurRadius: 2.0,
-                        )
-                      ]),
+                  decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade300,
+                      offset: Offset(0.0, 5.0),
+                      blurRadius: 2.0,
+                    )
+                  ]),
                 ),
-                Container(
+                Expanded(
+                    child: Container(
+                  height: 90 * dp,
                   child: ListView.separated(
-                      itemCount: contactsList.length,
-                      itemBuilder: (context, index){
-                        return ListTile(
-                          title: Text(contactsList[index].firstName + " " + contactsList[index].lastName),
-//                          leading: Icon(
-//                            Icons.person,
-//                            color: Colors.lightGreen,
-//
-//                          ),
-//                          trailing: Icon(
-//                            contactsList[index].isAdded ? Icons.add_circle_outline: Icons.remove_circle,
-//                            color: Colors.lightGreen,
-//                          ),
-                        );
-                      },
+                    itemCount: contactsList.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(contactsList[index].firstName +
+                            " " +
+                            contactsList[index].lastName),
+                        leading: CircleAvatar(
+                            child: Icon(
+                          Icons.person
+                        )),
+                        trailing: Icon(
+                          contactsList[index].isAdded
+                              ? Icons.add_circle_outline
+                              : Icons.remove_circle,
+                          color: Colors.lightGreen,
+                        ),
+                      );
+                    },
                     separatorBuilder: (context, index) {
                       return Divider();
-                    },),
-                )
+                    },
+                  ),
+                ))
               ],
             )
           ]),
@@ -136,17 +131,18 @@ class _ContactsScreenState extends State<ContactsScreen> {
   }
 
   List<Widget> _buildContactsList() {
-    return contactsList.map((Person e) => ListTile(
-      title: Text(e.firstName + " " + e.lastName),
-      leading: Icon(
-        Icons.person,
-        color: Colors.lightGreen,
-
-      ),
-      trailing: Icon(
-        e.isAdded ? Icons.add_circle_outline: Icons.remove_circle,
-        color: Colors.lightGreen,
-      ),
-    )).toList();
+    return contactsList
+        .map((Person e) => ListTile(
+              title: Text(e.firstName + " " + e.lastName),
+              leading: Icon(
+                Icons.person,
+                color: Colors.lightGreen,
+              ),
+              trailing: Icon(
+                e.isAdded ? Icons.add_circle_outline : Icons.remove_circle,
+                color: Colors.lightGreen,
+              ),
+            ))
+        .toList();
   }
 }
