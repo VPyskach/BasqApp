@@ -184,7 +184,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                       contacts[index].isAdded
                           ? Icons.remove_circle
                           : Icons.add_circle_outline,
-                      size: 5 * dp,
+                      size: 4 * dp,
                     ),
                     color: Colors.lightGreen,
                   )),

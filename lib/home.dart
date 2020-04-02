@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:basqapp/basquare_info.dart';
 import 'package:basqapp/chat.dart';
 import 'package:basqapp/contacts.dart';
 import 'package:basqapp/custom_avatar.dart';
@@ -45,11 +46,14 @@ class _AppHomePageState extends State<AppHomePage> {
                           height: 5 * dp,
                           child: Align(
                               alignment: Alignment.centerLeft,
-                              child: Icon(
-                                Icons.info_outline,
+                              child: IconButton(
+                                onPressed: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> BasquareInfo()));
+                                },
+                                icon: Icon(Icons.info_outline,
                                 color: Colors.teal,
-                                size: 4 * dp
-                              ))),
+                                size: 3 * dp
+                              )))),
                       Center(
                         child: Container(
                           height: 5 * dp,
