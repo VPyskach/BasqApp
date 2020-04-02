@@ -47,9 +47,9 @@ class Person {
   Person(this.id, this.firstName, this.lastName, this.photo, this.progress, this.isAdded);
 
   final int id;
-  final firstName;
+  final String firstName;
   final String lastName;
   final String photo;
   final double progress;
-  final bool isAdded;
+  bool isAdded;
 }

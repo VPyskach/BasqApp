@@ -65,19 +65,31 @@ class CustomCircleAvatar extends StatefulWidget {
 
 class _CustomCircleAvatarState extends State<CustomCircleAvatar> {
   bool _checkLoading = true;
-  Color _bgColor;
-
-  Color _randomColor() {
-    return Colors.primaries[Random().nextInt(Colors.primaries.length)].shade100;
-  }
+  Color _bgColor = Colors.primaries[Random().nextInt(Colors.primaries.length)].shade100;
 
   @override
   void initState() {
-    _bgColor = _randomColor();
+    _checkLoading = true;
     widget.myImage
         .resolve(new ImageConfiguration())
         .addListener(ImageStreamListener(
       (info, call) {
+        if (mounted)
+          setState(() {
+            _checkLoading = false;
+          });
+      },
+    ));
+  }
+
+
+  @override
+  void didUpdateWidget(CustomCircleAvatar oldWidget) {
+    _checkLoading = true;
+    widget.myImage
+        .resolve(new ImageConfiguration())
+        .addListener(ImageStreamListener(
+          (info, call) {
         if (mounted)
           setState(() {
             _checkLoading = false;

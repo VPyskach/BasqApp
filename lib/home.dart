@@ -15,7 +15,7 @@ class AppHomePage extends StatefulWidget {
 }
 
 class _AppHomePageState extends State<AppHomePage> {
-  var people = People().people;
+  List<Person> people = [];
 
   Person _getPerson(int i) {
     if (people.length > i)
@@ -48,6 +48,7 @@ class _AppHomePageState extends State<AppHomePage> {
                               child: Icon(
                                 Icons.info_outline,
                                 color: Colors.teal,
+                                size: 4 * dp
                               ))),
                       Center(
                         child: Container(
@@ -71,18 +72,21 @@ class _AppHomePageState extends State<AppHomePage> {
                                 child: Icon(
                                   Icons.album,
                                   color: Colors.teal,
+                                  size: 4 * dp
                                 ),
                               ),
                               Expanded(
                                 child: Icon(
                                   Icons.list,
                                   color: Colors.teal,
+                                  size: 4 * dp
                                 ),
                               ),
                               Expanded(
                                 child: Icon(
                                   Icons.apps,
                                   color: Colors.teal,
+                                  size: 4 * dp
                                 ),
                               )
                             ],
@@ -162,8 +166,15 @@ class _AppHomePageState extends State<AppHomePage> {
   }
 
   _navigateToContacts(BuildContext context) async {
-    final result = await Navigator.push(
+    List<Person> result = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => ContactsScreen()));
+    if(result != null){
+      people.clear();
+      people = result;
+    }
+    setState(() {
+
+    });
   }
 
   RadialGradient _bgGradient(double dp) => RadialGradient(
@@ -185,27 +196,40 @@ class _AppHomePageState extends State<AppHomePage> {
 }
 
 class PersonView extends StatefulWidget {
-  PersonView(this.person, this.paddingTop);
+  PersonView(this.person, this.paddingBottom);
 
-  final Person person;
-  final double paddingTop;
+  Person person;
+  final double paddingBottom;
 
   @override
-  PersonViewState createState() => PersonViewState(person, paddingTop);
+  PersonViewState createState() => PersonViewState();
+
+
 }
 
 class PersonViewState extends State<PersonView> with TickerProviderStateMixin {
-  PersonViewState(this.person, this.paddingBottom);
 
-  final Person person;
-  final double paddingBottom;
-  bool _showContent;
+  bool _showContent = false;
   double _borderProgress;
   AnimationController _progressAnimationController;
   AnimationController _scaleAnimationController;
 
   @override
   void initState() {
+    super.initState();
+    setState(() {
+      _borderProgress = 0;
+      _showContent = false;
+    });
+
+    _setProgressAnimation();
+    _setScaleAnimation();
+    _startAfterRandomTime();
+  }
+
+
+  @override
+  void didUpdateWidget(PersonView oldWidget) {
     setState(() {
       _borderProgress = 0;
       _showContent = false;
@@ -220,11 +244,11 @@ class PersonViewState extends State<PersonView> with TickerProviderStateMixin {
     _progressAnimationController = AnimationController(
         vsync: this,
         duration: new Duration(
-            milliseconds: person == null ? 0 : (person.progress * 5).round()))
+            milliseconds: widget.person == null ? 0 : (widget.person.progress * 5).round()))
       ..addListener(() {
         setState(() {
           _borderProgress = lerpDouble(
-              0, person.progress, _progressAnimationController.value);
+              0, widget.person.progress, _progressAnimationController.value);
         });
       });
   }
@@ -240,10 +264,10 @@ class PersonViewState extends State<PersonView> with TickerProviderStateMixin {
 
   void _startAfterRandomTime() async {
     await Future.delayed(Duration(milliseconds: Random().nextInt(2000)), () {
-      if (person != null) {
+      if (widget.person != null) {
         _scaleAnimationController..forward();
         setState(() {
-          _showContent = person != null;
+          _showContent = widget.person != null;
         });
       }
     });
@@ -251,12 +275,12 @@ class PersonViewState extends State<PersonView> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    var dp = MediaQuery.of(context).size.height / 100;
-    return !_showContent
+    final dp = MediaQuery.of(context).size.height / 100;
+    return !_showContent || widget.person == null
         ? Expanded(child: Container())
         : Expanded(
             child: Padding(
-                padding: EdgeInsets.only(bottom: paddingBottom * dp),
+                padding: EdgeInsets.only(bottom: widget.paddingBottom * dp),
                 child: ScaleTransition(
                     scale: _scaleAnimationController,
                     child: Column(
@@ -265,15 +289,15 @@ class PersonViewState extends State<PersonView> with TickerProviderStateMixin {
                       children: <Widget>[
                         InkWell(
                             onTap: () {
-                              _navigateToChat(context, person);
+                              _navigateToChat(context, widget.person);
                             },
-                            borderRadius: BorderRadius.circular(30),
+                            borderRadius: BorderRadius.circular(2*dp),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.end,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 Padding(
-                                    padding: const EdgeInsets.all(10.0),
+                                    padding: EdgeInsets.all(dp),
                                     child: CustomPaint(
                                         foregroundPainter:
                                             ProgressBorderPainter(
@@ -284,18 +308,18 @@ class PersonViewState extends State<PersonView> with TickerProviderStateMixin {
                                                     _borderProgress,
                                                 width: 5.0),
                                         child: Padding(
-                                            padding: const EdgeInsets.all(5.0),
+                                            padding: EdgeInsets.all(0.7 * dp),
                                             child: CustomCircleAvatar(
                                               myImage:
-                                                  NetworkImage(person.photo),
-                                              initials: person.firstName[0] +
-                                                  person.lastName[0],
+                                                  NetworkImage(widget.person != null ? widget.person.photo : ""),
+                                              initials: widget.person != null ? widget.person.firstName[0] +
+                                                  widget.person.lastName[0] : "",
                                               radius: 3 * dp,
                                             )))),
                                 Padding(
-                                    padding: const EdgeInsets.all(5.0),
+                                    padding: EdgeInsets.all(0.7 * dp),
                                     child: Text(
-                                        person != null ? person.firstName : ""))
+                                        widget.person != null ? widget.person.firstName : ""))
                               ],
                             ))
                       ],
@@ -308,7 +332,7 @@ class PersonViewState extends State<PersonView> with TickerProviderStateMixin {
           context,
           MaterialPageRoute(
               builder: (context) => ChatScreen(
-                    person: person,
+                    person,
                   )));
   }
 }
